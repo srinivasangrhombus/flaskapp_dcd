@@ -1,18 +1,21 @@
-version: '3.8'
+version: '3.8'  # Optional - defines Docker Compose file version
 
 services:
   flaskapp:
     build: .
     ports:
-      - "5000:5000"
+      - "5000:5000"  # Maps host:container port
     environment:
       - DATABASE_HOST=postgres
       - DATABASE_PORT=5432
       - DATABASE_NAME=flaskdb
       - DATABASE_USER=flaskuser
       - DATABASE_PASSWORD=flaskpass
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
     depends_on:
       - postgres
+    volumes:
+      - .:/app  # Optional - Mounts local code inside container
 
   postgres:
     image: postgres:13
@@ -23,7 +26,7 @@ services:
       - POSTGRES_USER=flaskuser
       - POSTGRES_PASSWORD=flaskpass
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data  # Persist data
 
 volumes:
   pgdata:
