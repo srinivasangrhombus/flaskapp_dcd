@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  flaskapp:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=flaskdb
+      - DATABASE_USER=flaskuser
+      - DATABASE_PASSWORD=flaskpass
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=flaskdb
+      - POSTGRES_USER=flaskuser
+      - POSTGRES_PASSWORD=flaskpass
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

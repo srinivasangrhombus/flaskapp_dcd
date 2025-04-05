@@ -1,9 +1,9 @@
 import os
+import psycopg2
 
 from flask import Flask,request,jsonify
 from cryptography.fernet import Fernet
 from flask_sqlalchemy import SQLAlchemy
-
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -34,7 +34,7 @@ if not key or key.strip() == "":  # If key is missing or empty, generate a new o
 else:
     print(f"Using existing ENCRYPTION_KEY: {key}")
 
-# ✅ Initialize `cipher_suite` after the key is set
+# ✅ Initialize cipher_suite after the key is set
 cipher_suite = Fernet(key.encode())
 @app.route("/encrypt",methods=["Post"])
 def encrypteData():
@@ -63,10 +63,42 @@ def decryptedData():
 
 
 
+# Database configuration using environment variables
+db_user = os.getenv('DATABASE_USER', 'postgres')
+db_password = os.getenv('DATABASE_PASSWORD', 'fap123')
+db_host = os.getenv('DATABASE_HOST', 'localhost')
+db_port = os.getenv('DATABASE_PORT', '5432')
+db_name = os.getenv('DATABASE_NAME', 'mydatabase')
 
-# Database configuration from environment variable
 
-app.config["SQLALCHEMY_DATABASE_URI"]=os.getenv("DATABASE_URL","postgresql://postgres:fap123@localhost:5432/mydatabase")
+app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Initialize the SQLAlchemy DB instance
+
+@app.route("/db-check")
+def db_check():
+    try:
+        conn = psycopg2.connect(
+            host=os.getenv('DATABASE_HOST'),
+            port=os.getenv('DATABASE_PORT'),
+            dbname=os.getenv('DATABASE_NAME'),
+            user=os.getenv('DATABASE_USER'),
+            password=os.getenv('DATABASE_PASSWORD')
+        )
+        cur = conn.cursor()
+        cur.execute("SELECT version();")
+        version = cur.fetchone()
+        conn.close()
+        return jsonify({"status": "success", "postgres_version": version})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
+
+
+
+
+
+
 
 if __name__== "__main__":
     app.run(host="0.0.0.0",port=5000,debug=True)
