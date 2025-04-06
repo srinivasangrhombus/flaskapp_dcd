@@ -17,8 +17,8 @@ app =Flask(__name__)
 #Configuring database using environmental variables
 
 app.config['SQLALCHEMY_DATABASE_URI'] =(
-    f"postgresql://{os.getenv("DATABASE_USER")}:{os.getenv("DATABASE_PASSWORD")}"
-    f"@{os.getenv("DATABASE_HOST")}:{os.getenv("DATABASE_PORT")}/{os.getenv("DATABSE_NAME")}"
+    f"postgresql://{os.getenv('DATABASE_USER')}:{os.getenv('DATABASE_PASSWORD')}"
+    f"@{os.getenv('DATABASE_HOST')}:{os.getenv('DATABASE_PORT')}/{os.getenv('DATABASE_NAME')}"
     
     )
 
