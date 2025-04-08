@@ -22,6 +22,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] =(
     
     )
 
+#for configuring gunicorn to run independent of postgres(not having postgres in local machine) , i am adding this code , inorder to support hosting in server.
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"]=False
 
 
